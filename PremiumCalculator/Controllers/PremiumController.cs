@@ -39,8 +39,8 @@ namespace PremiumCalculatorAPI.Controllers
 
             if (ratingFactor == 0)
             {
-                _logger.LogError("Invalid occupation or rating provided: {Occupation} - {Rating}", request.Occupation);
-                return BadRequest($"Invalid occupation or rating provided: {request.Occupation}");
+                _logger.LogError("Invalid occupation: {Occupation}", request.Occupation);
+                return BadRequest($"Invalid occupation: {request.Occupation}");
             }
 
             // Calculate the premium

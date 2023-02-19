@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import axios from 'axios';
 
 export class PremiumCalculator extends Component {
@@ -16,6 +16,12 @@ export class PremiumCalculator extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.calculatePremium = this.calculatePremium.bind(this);
+        this.areAllStatesTruthy = this.areAllStatesTruthy.bind(this);
+    }
+
+    areAllStatesTruthy = () => {
+        return Object.values(this.state).every(value => value);
     }
 
     handleChange(event) {
@@ -25,11 +31,17 @@ export class PremiumCalculator extends Component {
         this.setState({
             [name]: value
         });
-        this.handleSubmit.bind(this);
+        if (name === 'occupation' && this.areAllStatesTruthy()) {
+            this.calculatePremium();
+        }
     }
-    
+
     handleSubmit(event) {
         event.preventDefault();
+        this.calculatePremium();
+    }
+
+    calculatePremium() {
         axios.post('/premiumcalculator', {
             name: this.state.name,
             age: parseInt(this.state.age),
@@ -37,14 +49,14 @@ export class PremiumCalculator extends Component {
             occupation: this.state.occupation,
             deathCoverAmount: parseInt(this.state.deathSumInsured)
         })
-        .then(response => {
-            this.setState({
-                premium: response.data
+            .then(response => {
+                this.setState({
+                    premium: response.data
+                });
+            })
+            .catch(error => {
+                console.error(error);
             });
-        })
-        .catch(error => {
-            console.error(error);
-        });
     }
 
     render() {
@@ -54,15 +66,16 @@ export class PremiumCalculator extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <div>
                         <label>Name:</label>
-                        <input type="text" name="name" value={this.state.name} onChange={this.handleChange} required />
+                        <input type="text" name="name" value={this.state.name} onChange={this.handleChange} required/>
                     </div>
                     <div>
                         <label>Age:</label>
-                        <input type="number" name="age" value={this.state.age} onChange={this.handleChange} required />
+                        <input type="number" name="age" value={this.state.age} onChange={this.handleChange} required/>
                     </div>
                     <div>
                         <label>Date of Birth:</label>
-                        <input type="date" name="dateOfBirth" value={this.state.dateOfBirth} onChange={this.handleChange} required />
+                        <input type="date" name="dateOfBirth" value={this.state.dateOfBirth}
+                               onChange={this.handleChange} required/>
                     </div>
                     <div>
                         <label>Occupation:</label>
@@ -78,7 +91,8 @@ export class PremiumCalculator extends Component {
                     </div>
                     <div>
                         <label>Death-Sum Insured:</label>
-                        <input type="number" name="deathSumInsured" value={this.state.deathSumInsured} onChange={this.handleChange} required />
+                        <input type="number" name="deathSumInsured" value={this.state.deathSumInsured}
+                               onChange={this.handleChange} required/>
                     </div>
                     <div>
                         <button type="submit">Calculate Premium</button>

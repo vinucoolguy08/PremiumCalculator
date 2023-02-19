@@ -2,7 +2,8 @@ import { PremiumCalculator } from "./components/PremiumCalculator";
 
 const AppRoutes = [
   {
-    path: '/premium',
+    index: true,
+    // path: '/premium',
     element: <PremiumCalculator />
   },
 ];
