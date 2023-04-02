@@ -2,7 +2,7 @@ using MediatR;
 
 namespace PremiumCalculator.Models;
 
-public class PremiumRequest : IRequest<double>
+public class PremiumRequest : IRequest<PremiumResponse>
 {
     public string Name { get; set; }
 

@@ -11,7 +11,8 @@ export class PremiumCalculator extends Component {
             dateOfBirth: '',
             occupation: '',
             sumInsured: '',
-            premium: '',
+            deathPremium: '',
+            tpdPremium: '',
             nameError: '',
             ageError: '',
             dateOfBirthError: '',
@@ -67,7 +68,8 @@ export class PremiumCalculator extends Component {
         })
             .then(response => {
                 this.setState({
-                    premium: response.data
+                    deathPremium: response.data.deathPremium,
+                    tpdPremium: response.data.tpdPremium
                 });
             })
             .catch(error => {
@@ -130,7 +132,8 @@ export class PremiumCalculator extends Component {
                         <button  className="calculate-premium" type="submit">Calculate Premium</button>
                     </div>
                 </form>
-                {this.state.premium !== '' && <div className="premium-display"><strong>Monthly Premium:</strong> {this.state.premium}</div>}
+                {this.state.deathPremium !== '' && <div className="premium-display"><strong>Death Premium:</strong> {this.state.deathPremium}</div>}
+                {this.state.tpdPremium !== '' && <div className="premium-display"><strong>TPD Monthly Premium:</strong> {this.state.tpdPremium}</div>}
             </div>
         );
     }

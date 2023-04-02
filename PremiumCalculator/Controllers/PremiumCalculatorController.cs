@@ -16,7 +16,7 @@ namespace PremiumCalculator.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<decimal>> CalculatePremium([FromBody] PremiumRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<PremiumResponse>> CalculatePremium([FromBody] PremiumRequest request, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(request, cancellationToken);
             return Ok(result);
