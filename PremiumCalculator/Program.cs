@@ -1,10 +1,21 @@
+using FluentValidation;
+using MediatR;
 using PremiumCalculator.Repository;
 using Microsoft.EntityFrameworkCore;
+using PremiumCalculator.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PremiumCalculator.Validator.ValidationBehavior<,>));
+
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 // Add services to the container.
 builder.Services.AddDbContext<PremiumDbContext>(options =>
@@ -22,7 +33,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

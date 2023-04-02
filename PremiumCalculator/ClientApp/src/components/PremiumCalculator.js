@@ -10,8 +10,13 @@ export class PremiumCalculator extends Component {
             age: '',
             dateOfBirth: '',
             occupation: '',
-            deathSumInsured: '',
-            premium: ''
+            sumInsured: '',
+            premium: '',
+            nameError: '',
+            ageError: '',
+            dateOfBirthError: '',
+            occupationError: '',
+            sumInsuredError: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -21,7 +26,11 @@ export class PremiumCalculator extends Component {
     }
 
     areAllStatesTruthy = () => {
-        return Object.values(this.state).every(value => value);
+        const errorSuffix = "Error";
+        return Object.entries(this.state)
+            .filter(([key, value]) => !key.endsWith(errorSuffix))
+            .every(([key, value]) => value);
+        // return Object.values(this.state).every(value => value);
     }
 
     handleChange(event) {
@@ -42,12 +51,19 @@ export class PremiumCalculator extends Component {
     }
 
     calculatePremium() {
+        this.setState({
+            nameError: '',
+            ageError: '',
+            dateOfBirthError: '',
+            occupationError: '',
+            sumInsuredError: ''
+        });
         axios.post('/premiumcalculator', {
             name: this.state.name,
             age: parseInt(this.state.age),
             dateOfBirth: new Date(this.state.dateOfBirth),
             occupation: this.state.occupation,
-            deathCoverAmount: parseInt(this.state.deathSumInsured)
+            sumInsured: parseInt(this.state.sumInsured)
         })
             .then(response => {
                 this.setState({
@@ -55,27 +71,41 @@ export class PremiumCalculator extends Component {
                 });
             })
             .catch(error => {
-                console.error(error);
+                if (error.response && error.response.status === 400) {
+                    const validationErrors = error.response.data.errors;
+                    for (let fieldName in validationErrors) {
+                        if (this.state.hasOwnProperty(fieldName)) {
+                            this.setState({
+                                [`${fieldName}Error`]: validationErrors[fieldName][0]
+                            });
+                        }
+                    }
+                } else {
+                    console.error(error);
+                }
             });
     }
 
     render() {
         return (
             <div>
-                <h1>Premium Calculator</h1>
+                <h2>Premium Calculator</h2>
                 <form onSubmit={this.handleSubmit}>
                     <div>
                         <label>Name:</label>
                         <input type="text" name="name" value={this.state.name} onChange={this.handleChange} required/>
+                        {this.state.nameError && <div className="error">{this.state.nameError}</div>}
                     </div>
                     <div>
                         <label>Age:</label>
                         <input type="number" name="age" value={this.state.age} onChange={this.handleChange} required/>
+                        {this.state.ageError && <div className="error">{this.state.ageError}</div>}
                     </div>
                     <div>
                         <label>Date of Birth:</label>
                         <input type="date" name="dateOfBirth" value={this.state.dateOfBirth}
                                onChange={this.handleChange} required/>
+                        {this.state.dateOfBirthError && <div className="error">{this.state.dateOfBirthError}</div>}
                     </div>
                     <div>
                         <label>Occupation:</label>
@@ -88,17 +118,19 @@ export class PremiumCalculator extends Component {
                             <option value="Mechanic">Mechanic</option>
                             <option value="Florist">Florist</option>
                         </select>
+                        {this.state.occupationError && <div className="error">{this.state.occupationError}</div>}
                     </div>
                     <div>
                         <label>Death-Sum Insured:</label>
-                        <input type="number" name="deathSumInsured" value={this.state.deathSumInsured}
+                        <input type="number" name="sumInsured" value={this.state.sumInsured}
                                onChange={this.handleChange} required/>
+                        {this.state.sumInsuredError && <div className="error">{this.state.sumInsuredError}</div>}
                     </div>
                     <div>
-                        <button type="submit">Calculate Premium</button>
+                        <button  className="calculate-premium" type="submit">Calculate Premium</button>
                     </div>
                 </form>
-                {this.state.premium !== '' && <div><strong>Monthly Premium:</strong> {this.state.premium}</div>}
+                {this.state.premium !== '' && <div className="premium-display"><strong>Monthly Premium:</strong> {this.state.premium}</div>}
             </div>
         );
     }

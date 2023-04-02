@@ -1,24 +1,16 @@
-using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace PremiumCalculator.Models;
 
-public class PremiumRequest
+public class PremiumRequest : IRequest<double>
 {
-    [Required]
     public string Name { get; set; }
 
-    [Required]
-    [Range(1, 120)]
     public int Age { get; set; }
-
-    [Required]
-    [DataType(DataType.Date)]
+    
     public DateTime DateOfBirth { get; set; }
 
-    [Required]
     public string Occupation { get; set; }
     
-    [Required]
-    [Range(1, int.MaxValue)]
-    public int DeathCoverAmount { get; set; }
+    public int SumInsured { get; set; }
 }
