@@ -35,13 +35,19 @@ public class PremiumRequestHandlerTests
             SumInsured = 500
         };
         _handler = new PremiumRequestHandler(_dbContext, _mockLogger.Object);
-        var expectedPremium = 180;
+        var expectedPremium = new PremiumResponse
+        {
+            Name = "Raju",
+            DeathPremium = 180,
+            TpdPremium = 12.16
+        };
         
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
 
         // Assert
-        Assert.Equal(expectedPremium, result);
+        Assert.Equal(expectedPremium.DeathPremium, result.DeathPremium);
+        Assert.Equal(expectedPremium.TpdPremium, result.TpdPremium);
     }
     
     [Fact]
@@ -56,12 +62,14 @@ public class PremiumRequestHandlerTests
             SumInsured = 500
         };
         _handler = new PremiumRequestHandler(_dbContext, _mockLogger.Object);
-
+    
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
-
+    
         // Assert
-        Assert.Equal(0, result);
+        Assert.Equal(0, result.DeathPremium);
+        Assert.Equal(0, result.TpdPremium);
+
     }
     
     private async Task GenerateInMemoryDB()

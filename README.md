@@ -48,8 +48,6 @@ All input fields are mandatory. Given all the input fields are specified, a chan
 5. Navigate to the client directory using another terminal instance
 6. Run npm install to install the required packages
 7. Run npm start to start the frontend server
-8. Open the application in a web browser at http://localhost:3000
-
 
 ### How to Run the Application
 1. Navigate to the project directory in the terminal

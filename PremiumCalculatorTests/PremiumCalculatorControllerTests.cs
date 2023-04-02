@@ -26,9 +26,9 @@ namespace PremiumCalculatorTests
         {
             // Arrange
             var request = _fixture.Create<PremiumRequest>();
-            double expectedResult = 100;
+            var response = _fixture.Create<PremiumResponse>();
             _mockMediator.Setup(x => x.Send(It.IsAny<PremiumRequest>(), CancellationToken.None))
-                .ReturnsAsync(expectedResult);
+                .ReturnsAsync(response);
 
             // Act
             var result = await _controller.CalculatePremium(request, CancellationToken.None);
@@ -36,7 +36,7 @@ namespace PremiumCalculatorTests
             // Assert
             Assert.IsType<OkObjectResult>(result.Result);
             var okResult = (OkObjectResult)result.Result!;
-            Assert.Equal(expectedResult, okResult.Value);
+            Assert.Equal(response, okResult.Value);
         }
     }
 }
